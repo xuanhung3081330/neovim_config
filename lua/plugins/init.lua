@@ -21,6 +21,10 @@ return require("lazy").setup({
 			  capabilities = require("cmp_nvim_lsp").default_capabilities(),
 			  -- This line enhances the LSP capabilities (e.g., completion support)
 		  })
+
+	 	-- lspconfig.terraformls.setup({ -- Configure the Terraform language server (terraformls)
+		--	  capabilities = require("cmp_nvim_lsp").default_capabilities(), -- enable LSP features like auto-complete
+		  })
 	  end,
   },         -- Core LSP configuration
   { 
@@ -102,5 +106,33 @@ return require("lazy").setup({
 	  config = function()
 		  vim.cmd("colorscheme tokyonight")
 	  end,
-  }
+  },
+
+  -- Terraform syntax highlighting and formatting
+  {
+	"hashivim/vim-terraform",
+	ft = { "terraform" }, -- Only load this plugin for .tf files
+	config = function()
+		vim.g.terraform_fmt_on_save = 1 -- auto-format with 'terraform fmt' on save
+		vim.g.terraform_align = 1 -- align the `=` signs in key-value pairs
+	end,
+  },
+
+  -- Install mason.nvim
+  {
+	  "williamboman/mason.nvim",
+	  config = true,
+  },
+
+  -- Terraform language server (LSP)
+  {
+	  "williamboman/mason-lspconfig.nvim", -- This plugin is used to automatically connect installed servers to lspconfig. And nvim-lspconfig actually starts/configures the LSPs for Neovimopts
+	  config = function()
+		  require("mason-lspconfig").setup({
+			  ensure_installed = { "terraformls" }, -- auto-istanll terraform LSPs
+		  })
+	  --opts = {
+	--	  ensure_installed = { "terraformls" }, -- auto-install terraform LSPs
+	  --}
+  },
 })
