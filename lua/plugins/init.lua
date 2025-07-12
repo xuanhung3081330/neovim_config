@@ -24,7 +24,7 @@ return require("lazy").setup({
 
 	 	-- lspconfig.terraformls.setup({ -- Configure the Terraform language server (terraformls)
 		--	  capabilities = require("cmp_nvim_lsp").default_capabilities(), -- enable LSP features like auto-complete
-		  })
+		--  })
 	  end,
   },         -- Core LSP configuration
   { 
@@ -50,6 +50,13 @@ return require("lazy").setup({
 				  ["<S-Tab>"] = cmp.mapping.select_prev_item(), -- Go to the previous suggestion
 				  ["<CR>"] = cmp.mapping.confirm({ select = true }), -- Confirm the selection
 				  ["<C-Space>"] = cmp.mapping.complete(), -- Manually trigger completion popup
+				  ["<Esc>"] = cmp.mapping(function(fallback)
+					  if cmp.visible() then
+						  cmp.abort() -- close the completion menu
+					  else
+						  fallback() -- perform normal Esc (exit Insert mode). When you call fallback(), it tells Neovim to do whatever it would normally do for that key (like <Esc> in insert mode -> exit to normal mode) => It preserves the default behavior when you don't want to override the key
+					  end
+				  end, { "i" }) -- "i" = insert mode. This tells which mode(s) the key binding applies to
 			  }),
 			  sources = cmp.config.sources({ -- This defines where nvim-cmp gets its suggestions from
 				  { name = "nvim_lsp" },
@@ -131,6 +138,7 @@ return require("lazy").setup({
 		  require("mason-lspconfig").setup({
 			  ensure_installed = { "terraformls" }, -- auto-istanll terraform LSPs
 		  })
+	  end,
 	  --opts = {
 	--	  ensure_installed = { "terraformls" }, -- auto-install terraform LSPs
 	  --}
